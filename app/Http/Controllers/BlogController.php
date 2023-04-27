@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use app\Models\Blog;
 
 class BlogController extends Controller
 {
@@ -13,7 +14,11 @@ class BlogController extends Controller
      */
     public function index()
     {
-        //
+        $blogs = Blog::latest()->pageinate(25);
+        return[
+            'status' => 1,
+            'data' => $blogs
+        ];
     }
 
     /**
@@ -34,7 +39,17 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'body' => 'required',
+        ]);
+
+        $blog = Blog::create($request->all());
+        return [
+            "status" => 1,
+            "data" => $blog
+        ];
+
     }
 
     /**
@@ -43,9 +58,12 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Blog $blog)
     {
-        //
+        return [
+            "status" => 1,
+            "data" => $blog
+        ];
     }
 
     /**
@@ -66,9 +84,20 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Blog $blog)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'body' => 'required',
+        ]);
+
+        $blog->update($request->all());
+ 
+        return [
+            "status" => 1,
+            "data" => $blog,
+            "msg" => "Blog updated successfully"
+        ];
     }
 
     /**
@@ -77,8 +106,13 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Blog $blog)
     {
-        //
+        $blog->delete();
+        return [
+            "status" => 1,
+            "data" => $blog,
+            "msg" => "Blog deleted successfully"
+        ];
     }
 }
